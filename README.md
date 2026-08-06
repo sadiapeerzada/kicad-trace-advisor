@@ -24,9 +24,9 @@ design rationale.
    - Windows: `%APPDATA%\kicad\9.0\scripting\plugins\`
 2. Copy (or symlink) the `plugin/` folder from this repo into that
    directory, e.g.:
-   ```bash
+```bash
    cp -r plugin ~/.local/share/kicad/9.0/scripting/plugins/trace-advisor
-   ```
+```
 3. Open KiCad's PCB Editor and go to **Tools → External Plugins → Refresh
    Plugins** (or restart KiCad).
 4. The plugin appears as a toolbar icon and under **Tools → External
@@ -37,12 +37,12 @@ design rationale.
 1. Open a `.kicad_pcb` file with routed copper.
 2. (Optional but recommended) create `<yourboard>.current_map.json` next
    to your `.kicad_pcb`, mapping net names to expected current in amps:
-   ```json
+```json
    {
      "+5V": 2.0,
      "+12V_MOTOR": 4.5
    }
-   ```
+```
    Nets not listed here still show up in results (marked "no spec") but
    aren't risk-scored, since there's no basis to evaluate them.
 3. Run the plugin from the toolbar or **Tools → External Plugins**.
@@ -73,25 +73,48 @@ python -m pytest tests/ -v
 `pcbnew`/`wx` and are exercised by running the plugin inside KiCad 9
 directly (see Run, above).
 
-## Project structure
+## Verified working (KiCad 10, macOS)
 
-```
+This plugin was originally targeted at KiCad 9's `pcbnew` API, but has been
+installed and manually tested end-to-end against a live **KiCad 10.0**
+install on macOS, using a real `.kicad_pcb` project:
+
+1. Plugin loads via **Tools → External Plugins** with no import errors
+2. Reading an empty board correctly reports 0 nets analyzed
+3. A 0.2mm test trace assigned to net `TEST_NET`, with a
+   `current_map.json` specifying 2.0 A expected current, was correctly
+   flagged **UNDERSIZED** — plugin computed a safe current of 0.75 A for
+   that width, a minimum safe width of 0.769 mm, an estimated temperature
+   rise of 26.5°C, and a risk score of 1.65
+4. Clicking the flagged row in the results dialog correctly selected the
+   underlying trace segments on the PCB canvas (confirmed via KiCad's own
+   Properties panel showing "9 objects selected", net = TEST_NET)
+
+Screenshots of this test run:
+- [`docs/screenshots/ss_1.png`](docs/screenshots/ss_1.png) — results table showing the flagged UNDERSIZED net
+- [`docs/screenshots/ss_2.png`](docs/screenshots/ss_2.png) — click-to-highlight selecting the trace on the board
+
+The pure-math layer (`ipc2221.py`, `thermal.py`) is additionally covered
+by the 12 automated unit tests described above.
+
+## Project structure
 plugin/
-  __init__.py            # ActionPlugin registration
-  metadata.json           # KiCad PCM metadata
-  core/
-    ipc2221.py             # IPC-2221 math (pure Python, tested)
-    thermal.py              # I2R thermal risk model (pure Python, tested)
-    board_reader.py          # pcbnew API -> internal data model
-    analysis.py               # Combines the two into ranked results
-  ui/
-    results_dialog.py          # wx results table + board highlighting
+init.py # ActionPlugin registration
+metadata.json # KiCad PCM metadata
+core/
+ipc2221.py # IPC-2221 math (pure Python, tested)
+thermal.py # I2R thermal risk model (pure Python, tested)
+board_reader.py # pcbnew API -> internal data model
+analysis.py # Combines the two into ranked results
+ui/
+results_dialog.py # wx results table + board highlighting
 tests/
-  test_ipc2221.py
-  test_thermal.py
+test_ipc2221.py
+test_thermal.py
 docs/
-  DESIGN.md               # Full architecture + design rationale
-```
+DESIGN.md # Full architecture + design rationale
+screenshots/ # Verified test run evidence (KiCad 10, macOS)
+
 
 ## License
 
