@@ -1,0 +1,19 @@
+{
+  "identifier": "com.sadiapeerzada.trace-current-thermal-advisor",
+  "name": "Trace Width & Current/Thermal Advisor",
+  "description": "Checks PCB trace widths against IPC-2221 current-carrying capacity and estimates I2R-based thermal hotspots across copper.",
+  "description_full": "A KiCad 9 action plugin that reads the active PCB layout, computes the minimum safe trace width for each net using IPC-2221 formulas (copper weight and permissible temperature rise aware), flags undersized traces, and builds an approximate thermal risk map from I2R heating across all copper features. Results are shown in a ranked table inside KiCad; flagged nets can be selected/highlighted directly on the board.",
+  "identifier_kicad_version": "9.0",
+  "type": "plugin",
+  "author": {
+    "name": "Sadia Peerzada",
+    "contact": {
+      "web": "https://github.com/sadiapeerzada"
+    }
+  },
+  "license": "MIT",
+  "resources": {
+    "homepage": "https://github.com/sadiapeerzada/kicad-trace-advisor"
+  },
+  "tags": ["pcb", "design-rule-check", "thermal", "signal-integrity", "ipc-2221"]
+}
