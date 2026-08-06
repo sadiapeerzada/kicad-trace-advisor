@@ -91,8 +91,9 @@ install on macOS, using a real `.kicad_pcb` project:
    Properties panel showing "9 objects selected", net = TEST_NET)
 
 Screenshots of this test run:
-- [`docs/screenshots/ss_1.png`](docs/screenshots/ss_1.png) — results table showing the flagged UNDERSIZED net
-- [`docs/screenshots/ss_2.png`](docs/screenshots/ss_2.png) — click-to-highlight selecting the trace on the board
+Screenshots of this test run:
+   - [`ss_1.png`](ss_1.png) — results table showing the flagged UNDERSIZED net
+   - [`ss_2.png`](ss_2.png) — click-to-highlight selecting the trace on the board
 
 The pure-math layer (`ipc2221.py`, `thermal.py`) is additionally covered
 by the 12 automated unit tests described above.
